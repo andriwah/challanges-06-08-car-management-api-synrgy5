@@ -70,7 +70,7 @@ class CarRepositories {
   }
 
   static async deleted({ id, deletedBy }) {
-    const deletedPost = await Post.update(
+    const deletedPost = await Car.update(
       {
         deletedAt: new Date().getTime(),
         deletedBy,
@@ -79,6 +79,14 @@ class CarRepositories {
     );
 
     return deletedPost;
+  }
+
+  static async destroy({ id }) {
+    const deletedCars = Car.destroy({
+      where: {
+        id,
+      },
+    });
   }
 }
 
