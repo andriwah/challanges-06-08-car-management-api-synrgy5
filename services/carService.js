@@ -1,5 +1,5 @@
-const carRepositories = require('../repositories/carRepository');
-const cloudinary = require('../utils/cloudinary');
+const carRepositories = require("../repositories/carRepository");
+const cloudinary = require("../utils/cloudinary");
 
 class CarServices {
   static async created({ name, plate, manufacture, model, year, price, size, capacity, image, description, available, createdBy }) {
@@ -8,7 +8,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'name Is Required!',
+          message: "name Is Required!",
           data: {
             registered_user: null,
           },
@@ -19,7 +19,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'plate Is Required!',
+          message: "plate Is Required!",
           data: {
             registered_user: null,
           },
@@ -30,7 +30,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'manufacture Is Required!',
+          message: "manufacture Is Required!",
           data: {
             registered_user: null,
           },
@@ -41,7 +41,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'model Is Required!',
+          message: "model Is Required!",
           data: {
             registered_user: null,
           },
@@ -52,7 +52,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'year Is Required!',
+          message: "year Is Required!",
           data: {
             registered_user: null,
           },
@@ -63,7 +63,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'price Is Required!',
+          message: "price Is Required!",
           data: {
             registered_user: null,
           },
@@ -74,7 +74,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'size Is Required!',
+          message: "size Is Required!",
           data: {
             registered_user: null,
           },
@@ -85,7 +85,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'capacity Is Required!',
+          message: "capacity Is Required!",
           data: {
             registered_user: null,
           },
@@ -96,7 +96,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'image Is Required!',
+          message: "image Is Required!",
           data: {
             registered_user: null,
           },
@@ -107,7 +107,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'description Is Required!',
+          message: "description Is Required!",
           data: {
             registered_user: null,
           },
@@ -118,7 +118,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'available Is Required!',
+          message: "available Is Required!",
           data: {
             registered_user: null,
           },
@@ -131,7 +131,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'Car is already exist',
+          message: "Car is already exist",
           data: {
             registered_user: null,
           },
@@ -139,10 +139,10 @@ class CarServices {
       } else {
         //  Cloudinary
         const fileToUpload = image;
-        const fileBase64 = fileToUpload.buffer.toString('base64');
+        const fileBase64 = fileToUpload.buffer.toString("base64");
         const file = `data:${fileToUpload.mimetype};base64,${fileBase64}`;
 
-        const cloudinaryUploader = await cloudinary.uploader.upload(file, { folder: 'avatar' }, (err, result) => {
+        const cloudinaryUploader = await cloudinary.uploader.upload(file, { folder: "avatar" }, (err, result) => {
           if (err) {
             res.status(400).send(`Failed to upload file to cloudinary: ${err.message}`);
             return;
@@ -169,7 +169,7 @@ class CarServices {
         return {
           status: true,
           status_code: 201,
-          message: 'Register Succesfully ',
+          message: "Created Car Succesfully",
           data: {
             registered_user: created_car,
           },
@@ -195,7 +195,7 @@ class CarServices {
         return {
           status: false,
           status_code: 401,
-          message: 'Not Found ',
+          message: "Not Found ",
           data: {
             cars: null,
           },
@@ -205,7 +205,7 @@ class CarServices {
       return {
         status: true,
         status_code: 201,
-        message: 'Succesfully ',
+        message: "Succesfully ",
         data: {
           cars: getCars,
         },
@@ -230,7 +230,7 @@ class CarServices {
         return {
           status: false,
           status_code: 401,
-          message: 'Not Found ',
+          message: "Not Found ",
           data: {
             find: null,
           },
@@ -240,7 +240,7 @@ class CarServices {
       return {
         status: true,
         status_code: 201,
-        message: 'Succesfully ',
+        message: "Succesfully ",
         data: {
           find: getCars,
         },
@@ -263,7 +263,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'Updated field is required',
+          message: "Updated field is required",
           data: {
             updated: null,
           },
@@ -276,7 +276,7 @@ class CarServices {
         return {
           status: false,
           status_code: 400,
-          message: 'Car Not Found',
+          message: "Car Not Found",
           data: {
             findCar: null,
           },
@@ -284,10 +284,10 @@ class CarServices {
       } else {
         //  Cloudinary
         const fileToUpload = image;
-        const fileBase64 = fileToUpload.buffer.toString('base64');
+        const fileBase64 = fileToUpload.buffer.toString("base64");
         const file = `data:${fileToUpload.mimetype};base64,${fileBase64}`;
 
-        const cloudinaryUploader = await cloudinary.uploader.upload(file, { folder: 'avatar' }, (err, result) => {
+        const cloudinaryUploader = await cloudinary.uploader.upload(file, { folder: "avatar" }, (err, result) => {
           if (err) {
             res.status(400).send(`Failed to upload file to cloudinary: ${err.message}`);
             return;
@@ -315,7 +315,7 @@ class CarServices {
         return {
           status: true,
           status_code: 201,
-          message: 'Updated Car Succesfully ',
+          message: "Updated Car Succesfully ",
           data: {
             updated: updated_car,
           },
@@ -342,18 +342,18 @@ class CarServices {
       });
       if (deleted_Car == 0) {
         return {
-          status: 'NOT_FOUND',
+          status: "NOT_FOUND",
           statusCode: 404,
-          message: 'Car not found',
+          message: "Car not found",
           data: {
             deleted_car: null,
           },
         };
       } else {
         return {
-          status: 'OK',
+          status: "OK",
           statusCode: 200,
-          message: 'car deleted',
+          message: "car deleted",
           data: {
             deleted_car: deleted_Car,
           },
@@ -361,7 +361,7 @@ class CarServices {
       }
     } catch (err) {
       return {
-        status: 'INTERNAL_SERVER_ERROR',
+        status: "INTERNAL_SERVER_ERROR",
         statusCode: 500,
         message: err,
         data: {

@@ -1,10 +1,10 @@
-require('dotenv').config();
-const userRepository = require('../repositories/userRepository');
-const bcrypt = require('bcrypt');
-const cloudinary = require('../utils/cloudinary');
-const { OAuth2Client } = require('google-auth-library');
-const jwt = require('jsonwebtoken');
-const { JWT, ROLES } = require('../lib/const');
+require("dotenv").config();
+const userRepository = require("../repositories/userRepository");
+const bcrypt = require("bcrypt");
+const cloudinary = require("../utils/cloudinary");
+const { OAuth2Client } = require("google-auth-library");
+const jwt = require("jsonwebtoken");
+const { JWT, ROLES } = require("../lib/const");
 const SALT_ROUND = 10;
 
 class AuthService {
@@ -15,7 +15,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Name Is Required!',
+          message: "Name Is Required!",
           data: {
             registered_user: null,
           },
@@ -27,7 +27,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Email Is Required!',
+          message: "Email Is Required!",
           data: {
             registered_user: null,
           },
@@ -39,7 +39,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Password Is Required!',
+          message: "Password Is Required!",
           data: {
             registered_user: null,
           },
@@ -48,7 +48,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Password Minimum 8 Character!',
+          message: "Password Minimum 8 Character!",
           data: {
             registered_user: null,
           },
@@ -60,7 +60,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Picture Is Required!',
+          message: "Picture Is Required!",
           data: {
             registered_user: null,
           },
@@ -73,7 +73,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Email already exist',
+          message: "Email already exist",
           data: {
             registered_user: null,
           },
@@ -83,10 +83,10 @@ class AuthService {
 
         // Cloudinary
         const fileToUpload = picture;
-        const fileBase64 = fileToUpload.buffer.toString('base64');
+        const fileBase64 = fileToUpload.buffer.toString("base64");
         const file = `data:${fileToUpload.mimetype};base64,${fileBase64}`;
 
-        const cloudinaryUploader = await cloudinary.uploader.upload(file, { folder: 'avatar' }, (err, result) => {
+        const cloudinaryUploader = await cloudinary.uploader.upload(file, { folder: "avatar" }, (err, result) => {
           if (err) {
             res.status(400).send(`Failed to upload file to cloudinary: ${err.message}`);
             return;
@@ -99,14 +99,14 @@ class AuthService {
           name,
           email,
           password: hashedPassword,
-          role: 'member',
+          role: "member",
           picture: cloudinaryUploader.url,
         });
 
         return {
           status: true,
           status_code: 201,
-          message: 'Register Succesfully ',
+          message: "Register Succesfully",
           data: {
             registered_user: createdUser,
           },
@@ -131,7 +131,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Name Is Required!',
+          message: "Name Is Required!",
           data: {
             registered_user: null,
           },
@@ -143,7 +143,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Email Is Required!',
+          message: "Email Is Required!",
           data: {
             registered_user: null,
           },
@@ -155,7 +155,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Password Is Required!',
+          message: "Password Is Required!",
           data: {
             registered_user: null,
           },
@@ -164,7 +164,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Password Minimum 8 Character!',
+          message: "Password Minimum 8 Character!",
           data: {
             registered_user: null,
           },
@@ -176,7 +176,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Admin role user can be registered this way',
+          message: "Admin role user can be registered this way",
           data: {
             registered_user: null,
           },
@@ -189,7 +189,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Email already exist',
+          message: "Email already exist",
           data: {
             registered_user: null,
           },
@@ -199,10 +199,10 @@ class AuthService {
 
         // Cloudinary
         const fileToUpload = picture;
-        const fileBase64 = fileToUpload.buffer.toString('base64');
+        const fileBase64 = fileToUpload.buffer.toString("base64");
         const file = `data:${fileToUpload.mimetype};base64,${fileBase64}`;
 
-        const cloudinaryUploader = await cloudinary.uploader.upload(file, { folder: 'avatar' }, (err, result) => {
+        const cloudinaryUploader = await cloudinary.uploader.upload(file, { folder: "avatar" }, (err, result) => {
           if (err) {
             res.status(400).send(`Failed to upload file to cloudinary: ${err.message}`);
             return;
@@ -222,7 +222,7 @@ class AuthService {
         return {
           status: true,
           status_code: 201,
-          message: 'Register Succesfully ',
+          message: "Register Succesfully",
           data: {
             registered_user: createdUser,
           },
@@ -247,7 +247,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Email Is Required!',
+          message: "Email Is Required!",
           data: {
             registered_user: null,
           },
@@ -258,7 +258,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Password Is Required!',
+          message: "Password Is Required!",
           data: {
             registered_user: null,
           },
@@ -267,7 +267,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'Password Minimum 8 Character!',
+          message: "Password Minimum 8 Character!",
           data: {
             registered_user: null,
           },
@@ -280,7 +280,7 @@ class AuthService {
         return {
           status: false,
           status_code: 400,
-          message: 'This account has not set up a password.',
+          message: "This account has not set up a password.",
           data: {
             user: null,
           },
@@ -291,7 +291,7 @@ class AuthService {
         return {
           status: false,
           status_code: 404,
-          message: 'Email not registered',
+          message: "Email not registered",
           data: {
             user: null,
           },
@@ -314,7 +314,7 @@ class AuthService {
           return {
             status: true,
             status_code: 200,
-            message: 'User Successfully Logged in',
+            message: "User Successfully Logged in",
             data: {
               token,
             },
@@ -323,7 +323,7 @@ class AuthService {
           return {
             status: false,
             status_code: 400,
-            message: 'Password Wrong',
+            message: "Password Wrong",
             data: {
               user: null,
             },
@@ -377,7 +377,7 @@ class AuthService {
       return {
         status: true,
         status_code: 200,
-        message: 'User Succesfull Login',
+        message: "User Succesfull Login",
         data: {
           token,
         },
