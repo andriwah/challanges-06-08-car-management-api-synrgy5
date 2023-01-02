@@ -1,8 +1,8 @@
 const request = require("supertest");
 const { app, server } = require("../server");
 const bcrypt = require("bcrypt");
-const usersRepository = require("../repositories/userRepository");
 const path = require("path");
+const usersRepository = require("../repositories/userRepository");
 const authService = require("../services/authServices");
 
 beforeEach(async () => {
@@ -74,8 +74,8 @@ describe("POST /auth/register", () => {
   });
 });
 
-// 3. Current Me
-describe("POST /auth/me", () => {
+// 3. Current User
+describe("GET /auth/me", () => {
   it("should response with 200 as status code", async () => {
     const rawPassword = "qwerty123";
     const hashedPassword = await bcrypt.hash(rawPassword, 10);
@@ -110,43 +110,52 @@ describe("POST /auth/me", () => {
   }, 60_000);
 });
 
-describe("POST /auth/registeradmin", () => {
+// 4. Register Admin
+describe("POST /auth/register/admin", () => {
   it("should response with 201 as status code", async () => {
-    // const filePath = path.join(__dirname, "../storages/.storage");
-    const rawPassword = "1234";
+    const filePath = path.join(__dirname, "../storages/admin.jpg");
+    const rawPassword = "qwerty123";
     const hashedPassword = await bcrypt.hash(rawPassword, 10);
 
-    const payload = {
-      name: "User 6",
-      email: "user6@gmail.com",
-      password: "User12345",
+    const payloadRegisterAdmin = {
+      name: "admin 1",
+      email: "admin1@example.com",
+      password: "admin1234",
+      picture: filePath,
+      role: "admin",
     };
 
     const payloadSuperAdmin = {
-      name: "superadmintest",
-      email: "superadmin3test@gmail.com",
+      name: "superadmin testing",
+      email: "superadmin@example.com",
       password: hashedPassword,
+      picture: filePath,
       role: "superadmin",
     };
-    const createSuperAdmin = await UsersRepository.create(payloadSuperAdmin);
+    const createSuperAdmin = await usersRepository.register(payloadSuperAdmin);
 
-    const doLogin = await AuthService.login({
+    const payloadLoginSuperAdmin = {
       email: payloadSuperAdmin.email,
       password: rawPassword,
-    });
+    };
+
+    const login = await authService.login(payloadLoginSuperAdmin);
 
     return request(app)
-      .post("/auth/registeradmin")
-      .set("Authorization", `Bearer ${doLogin.data.token}`)
-      .send(payload)
+      .post("/auth/register/admin")
+      .set("Authorization", `Bearer ${login.data.token}`)
+      .field("name", payloadRegisterAdmin.name)
+      .field("email", payloadRegisterAdmin.email)
+      .field("password", payloadRegisterAdmin.password)
+      .field("role", payloadRegisterAdmin.role)
+      .attach("picture", payloadRegisterAdmin.picture)
       .then((res) => {
         expect(res.statusCode).toBe(201);
         expect(res._body.data.registered_user).not.toEqual(null);
 
         // Delete Test Data
-        // console.log(res._body.data.registered_user.id);
-        UsersRepository.destroy({ id: res._body.data.registered_user.id });
-        UsersRepository.destroy({ id: createSuperAdmin.id });
+        usersRepository.deletedUserByID({ id: res._body.data.registered_user.id });
+        usersRepository.deletedUserByID({ id: createSuperAdmin.id });
       });
   }, 60_000);
 });
