@@ -156,12 +156,18 @@ describe("GET /cars/:id", () => {
       .then((res) => {
         expect(res.statusCode).toBe(200);
         expect(res._body.data).not.toEqual(null);
-        expect(res._body.data.id).toEqual(createCar.id);
-        expect(res._body.data.name).toEqual(payload.name);
-        expect(res._body.data.tipemobil).toEqual(payload.tipemobil);
-        expect(res._body.data.price).toEqual(payload.price);
-        expect(res._body.data.image).toEqual(payload.image);
-        expect(res._body.data.createdBy).toEqual(payload.createdBy);
+        expect(createCar.name).toEqual(payload.name);
+        expect(createCar.plate).toEqual(payload.plate);
+        expect(createCar.manufacture).toEqual(payload.manufacture);
+        expect(createCar.model).toEqual(payload.model);
+        expect(createCar.year).toEqual(payload.year);
+        expect(createCar.price).toEqual(payload.price);
+        expect(createCar.size).toEqual(payload.size);
+        expect(createCar.capacity).toEqual(payload.capacity);
+        expect(createCar.image).toEqual(payload.image);
+        expect(createCar.description).toEqual(payload.description);
+        expect(createCar.available).toEqual(payload.available);
+        expect(createCar.createdBy).toEqual(payload.createdBy);
 
         carRepository.destroy({ id: res._body.data.id });
         usersRepository.deletedUserByID({ id: createSuperAdmin.id });
@@ -227,9 +233,17 @@ describe("PUT /car/:id", () => {
       .put(`/car/${createCar.id}`)
       .set("Authorization", `Bearer ${login.data.token}`)
       .field("name", payloadUpdate.name)
-      .field("tipemobil", payloadUpdate.tipemobil)
+      .field("plate", payloadUpdate.plate)
+      .field("manufacture", payloadUpdate.manufacture)
+      .field("model", payloadUpdate.model)
+      .field("year", payloadUpdate.year)
       .field("price", payloadUpdate.price)
-      .attach("picture", payloadUpdate.picture)
+      .field("size", payloadUpdate.size)
+      .field("capacity", payloadUpdate.capacity)
+      .attach("image", payloadUpdate.image)
+      .field("description", payloadUpdate.description)
+      .field("available", payloadUpdate.available)
+      .field("updatedBy", payloadUpdate.updatedBy)
       .then((res) => {
         expect(res.statusCode).toBe(200);
         expect(res._body.data).not.toEqual(null);
