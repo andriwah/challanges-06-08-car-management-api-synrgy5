@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt");
 const carRepository = require("../repositories/carRepository");
 const usersRepository = require("../repositories/userRepository");
 const authService = require("../services/authServices");
-const { log } = require("console");
 
 beforeEach(async () => {
   await server.close();
@@ -14,59 +13,56 @@ beforeEach(async () => {
 // 1. Create Car
 describe("POST /car/create", () => {
   it("should response with 201 as status code", async () => {
+    const filePath = path.join(__dirname,"../storages/admin.jpg");
+
     const rawPassword = "qwerty123";
     const hashedPassword = await bcrypt.hash(rawPassword, 10);
-    const filePath = path.join(__dirname, "../storages/admin.jpg");
-
-    const payloadAddCar = {
-      name: "Alphard",
-      plate: "L 1234 AM",
-      manufacture: "Toyota",
-      model: "Bensin type G",
-      year: 2022,
-      price: "900.000.000",
-      size: "medium",
-      capacity: 6,
-      image: filePath,
-      description: "Lorem Ipsum",
-      available: true,
-      createdBy: "1",
-    };
 
     const payloadCreateSuperAdmin = {
       name: "superadmin",
-      email: "superadmin@example.com",
+      email: "superadmin@car.com",
       password: hashedPassword,
       role: "superadmin",
-      picture: filePath,
     };
-
     const createSuperAdmin = await usersRepository.register(payloadCreateSuperAdmin);
 
-    const payloadLogin = {
+    const login = await authService.login({
       email: payloadCreateSuperAdmin.email,
       password: rawPassword,
-    };
+    });
 
-    const login = await authService.login(payloadLogin);
+    const payloadCreatedCar = {
+      name: 'Innova',
+      plate: 'L 1234 AM',
+      manufacture: 'Toyota',
+      model: 'Bensin type V',
+      year: 2020,
+      price: 'Rp. 500.000.000',
+      size: 'medium',
+      capacity: 7,
+      image: filePath,
+      description: 'Lorem Ipsum',
+      available: true,
+      createdBy: '1',
+    };
 
     return request(app)
       .post("/car/create")
       .set("Authorization", `Bearer ${login.data.token}`)
-      .field("name", payloadAddCar.name)
-      .field("plate", payloadAddCar.plate)
-      .field("manufacture", payloadAddCar.manufacture)
-      .field("model", payloadAddCar.model)
-      .field("year", payloadAddCar.year)
-      .field("price", payloadAddCar.price)
-      .field("size", payloadAddCar.size)
-      .field("capacity", payloadAddCar.capacity)
-      .attach("image", payloadAddCar.image)
-      .field("description", payloadAddCar.description)
-      .field("available", payloadAddCar.available)
-      .field("createdBy", payloadAddCar.createdBy)
+      .field("name", payloadCreatedCar.name)
+      .field("plate", payloadCreatedCar.plate)
+      .field("manufacture", payloadCreatedCar.manufacture)
+      .field("model", payloadCreatedCar.model)
+      .field("year", payloadCreatedCar.year)
+      .field("price", payloadCreatedCar.price)
+      .field("size", payloadCreatedCar.size)
+      .field("capacity", payloadCreatedCar.capacity)
+      .attach("image", payloadCreatedCar.image)
+      .field("description", payloadCreatedCar.description)
+      .field("available", payloadCreatedCar.available)
+      .field("createdBy", payloadCreatedCar.createdBy)
       .then((res) => {
-        console.log("res: ", res);
+        console.log("res:", res);
         expect(res.statusCode).toBe(201);
         expect(res._body.data).not.toEqual(null);
 
@@ -107,6 +103,7 @@ describe("GET /car", () => {
         expect(res._body.data).not.toEqual(null);
 
         usersRepository.deletedUserByID({ id: createSuperAdmin.id });
+        server.close()
       });
   }, 60_000);
 });
@@ -114,6 +111,7 @@ describe("GET /car", () => {
 // 3. Get Cars By Id
 describe("GET /cars/:id", () => {
   it("should response with 200 as status code", async () => {
+    const filePath = path.join(__dirname,"../storages/admin.jpg");
     const payload = {
       name: "Grand Max",
       plate: "BM 1234 AM",
@@ -130,28 +128,25 @@ describe("GET /cars/:id", () => {
     };
 
     const createCar = await carRepository.created(payload);
-    console.log(createCar.id);
 
     const rawPassword = "qwerty123";
     const hashedPassword = await bcrypt.hash(rawPassword, 10);
 
-    const payloadSuperAdmin = {
-      name: "superadmin test",
-      email: "superadmin@example.com",
+    const payloadCreateSuperAdmin = {
+      name: "superadmin",
+      email: "superadmin@car.com",
       password: hashedPassword,
       role: "superadmin",
     };
-    const createSuperAdmin = await usersRepository.register(payloadSuperAdmin);
+    const createSuperAdmin = await usersRepository.register(payloadCreateSuperAdmin);
 
-    const payloadLogin = {
-      email: payloadSuperAdmin.email,
+    const login = await authService.login({
+      email: payloadCreateSuperAdmin.email,
       password: rawPassword,
-    };
-
-    const login = await authService.login(payloadLogin);
+    });
 
     return request(app)
-      .get(`/cars/${createCar.id}`)
+      .get(`/car/${createCar.id}`)
       .set("Authorization", `Bearer ${login.data.token}`)
       .then((res) => {
         expect(res.statusCode).toBe(200);
@@ -169,13 +164,14 @@ describe("GET /cars/:id", () => {
         expect(createCar.available).toEqual(payload.available);
         expect(createCar.createdBy).toEqual(payload.createdBy);
 
-        carRepository.destroy({ id: res._body.data.id });
+        carRepository.destroy({ id: res.body.data.id });
         usersRepository.deletedUserByID({ id: createSuperAdmin.id });
+        server.close()
       });
   }, 60_000);
 });
 
-// 4. Update Car PUT /car/id
+// // 4. Update Car PUT /car/id
 describe("PUT /car/:id", () => {
   it("should response with 201 as status code", async () => {
     const filePath = path.join(__dirname, "../storages/admin.jpg");
@@ -206,7 +202,7 @@ describe("PUT /car/:id", () => {
       password: hashedPassword,
       role: "superadmin",
     };
-    const createSuperAdmin = await userRepository.register(payloadSuperAdmin);
+    const createSuperAdmin = await usersRepository.register(payloadSuperAdmin);
 
     const payloadLogin = {
       email: payloadSuperAdmin.email,
@@ -229,6 +225,7 @@ describe("PUT /car/:id", () => {
       available: true,
       updatedBy: "1",
     };
+    
     return request(app)
       .put(`/car/${createCar.id}`)
       .set("Authorization", `Bearer ${login.data.token}`)
@@ -245,18 +242,19 @@ describe("PUT /car/:id", () => {
       .field("available", payloadUpdate.available)
       .field("updatedBy", payloadUpdate.updatedBy)
       .then((res) => {
-        expect(res.statusCode).toBe(200);
+        expect(res.statusCode).toBe(201);
         expect(res._body.data).not.toEqual(null);
 
-        carRepository.destroy({ id: createCar.id });
+        carRepository.destroy({ id: res.body.data.id });
         usersRepository.deletedUserByID({ id: createSuperAdmin.id });
+        server.close()
       });
   }, 60_000);
 });
 
 // 5. DELETED CAR /car/:id
-describe("DELETE /cars/:id", () => {
-  it("should response with 201 as status code", async () => {
+describe("DELETE /car/:id", () => {
+  it("should response with 200 as status code", async () => {
     const filePath = path.join(__dirname, "../storages/admin.jpg");
     const rawPassword = "qwerty123";
     const hashedPassword = await bcrypt.hash(rawPassword, 10);
@@ -276,7 +274,7 @@ describe("DELETE /cars/:id", () => {
       createdBy: "1",
     };
 
-    const createCar = await carRepository.create(payload);
+    const createCar = await carRepository.created(payload);
 
     const payloadSuperAdmin = {
       name: "superadmin test",
@@ -294,13 +292,15 @@ describe("DELETE /cars/:id", () => {
     const login = await authService.login(payloadLogin);
 
     return request(app)
-      .delete(`/cars/${createCar.id}`)
+      .delete(`/car/${createCar.id}`)
       .set("Authorization", `Bearer ${login.data.token}`)
       .then((res) => {
         expect(res.statusCode).toBe(200);
         expect(res._body.data).not.toEqual(null);
-        carRepository.destroy({ id: createCar.id });
+
+        carRepository.destroy({ id: res._body.data.registered_user.id });
         usersRepository.deletedUserByID({ id: createSuperAdmin.id });
+        server.close()
       });
   }, 60_000);
 });

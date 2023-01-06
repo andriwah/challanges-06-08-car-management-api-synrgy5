@@ -204,7 +204,7 @@ class CarServices {
 
       return {
         status: true,
-        status_code: 201,
+        status_code: 200,
         message: "Succesfully ",
         data: {
           cars: getCars,
@@ -239,7 +239,7 @@ class CarServices {
 
       return {
         status: true,
-        status_code: 201,
+        status_code: 200,
         message: "Succesfully ",
         data: {
           find: getCars,
